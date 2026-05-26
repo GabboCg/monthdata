@@ -375,6 +375,17 @@ if (nzchar(sa_key)) {
 #   - Local: look up (or create) a folder literally named "monthdata"
 #     in the authenticated user's Drive.
 parent_id <- Sys.getenv("GDRIVE_FOLDER_ID", unset = "")
+parent_id <- trimws(parent_id)
+
+# Accept a full Drive URL too: extract just the ID segment
+if (grepl("drive\\.google\\.com", parent_id, fixed = FALSE)) {
+  
+  parent_id <- sub(".*/folders/([^/?#&]+).*", "\\1", parent_id)
+  
+}
+
+# Strip any query string / fragment (e.g. ?usp=sharing)
+parent_id <- sub("[?#].*$", "", parent_id)
 
 drive_find_or_mkdir <- function(name, path = NULL) {
 
