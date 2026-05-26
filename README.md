@@ -63,7 +63,18 @@ Each workbook contains five sheets:
 | `erp-rfree` | Equity risk premium and risk-free rate |
 | `recession` | NBER recession dummy (`USREC`) |
 
-Both files are also uploaded to Google Drive under `monthdata/short/` and `monthdata/long/`.
+## Download
+
+The latest refresh of both workbooks is published to Google Drive and updated automatically each day by the [`refresh-data`](.github/workflows/refresh-data.yml) workflow.
+
+| Sample | Period | Predictors | Link |
+|--------|--------|------------|------|
+| Short  | 1990–present | 179 | [PredictorData.xlsx](https://docs.google.com/spreadsheets/d/1t9lgsI_JUWdkEaZsyfm_sd85m7NHStlH/edit?usp=sharing) |
+| Long   | 1960–present | 157 | [PredictorData.xlsx](https://docs.google.com/spreadsheets/d/1MwsjDhoAaUnnIdwKRcmBsPSOgvxFlIzk/edit?usp=sharing) |
+
+For a direct `.xlsx` download instead of the in-browser viewer, append `/export?format=xlsx` to the file ID:
+- Short: <https://docs.google.com/spreadsheets/d/1t9lgsI_JUWdkEaZsyfm_sd85m7NHStlH/export?format=xlsx>
+- Long: <https://docs.google.com/spreadsheets/d/1MwsjDhoAaUnnIdwKRcmBsPSOgvxFlIzk/export?format=xlsx>
 
 ## Usage
 
