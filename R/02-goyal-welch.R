@@ -1,22 +1,22 @@
-#' ---------------------------------------------------------------
-#' Goyal & Welch (2008) equity premium predictors
-#' Source: Amit Goyal's Google Drive (PredictorData2024.xlsx)
-#' ---------------------------------------------------------------
+# ---------------------------------------------------------------
+# Goyal & Welch (2008) equity premium predictors
+# Source: Amit Goyal's Google Drive (PredictorData2024.xlsx)
+# ---------------------------------------------------------------
 
 download_goyal_welch <- function() {
-
+  
   cat(">> Downloading Goyal-Welch predictors...\n")
-
+  
   url <- "https://docs.google.com/spreadsheets/d/1OIZg6htTK60wtnCVXvxAujvG1aKEOVYv/export?format=xlsx"
   tmp <- tempfile(fileext = ".xlsx")
   download.file(url, tmp, mode = "wb", quiet = TRUE)
-
+  
   gw_raw <- readxl::read_xlsx(tmp, sheet = "Monthly") |>
     dplyr::mutate(dplyr::across(dplyr::everything(), as.numeric)) |>
     janitor::clean_names()
-
+  
   unlink(tmp)
-
+  
   # predictors
   gw_pred <- gw_raw |>
     dplyr::filter(yyyymm >= 192512) |>
@@ -35,10 +35,9 @@ download_goyal_welch <- function() {
       year  = as.numeric(stringr::str_sub(yyyymm, 1, 4)),
       month = as.numeric(stringr::str_sub(yyyymm, -2))
     ) |>
-    dplyr::rename(tb = tbl, bm = b_m, infm = infl) |>
-    dplyr::select(yyyymm, year, month, dp, dy, ep, de, bm, ntis, tb,
-                  lty, ltr, ts, def, dfr, rtb, rbr, infm)
-
+    dplyr::rename(tb = tbl, infm = infl) |>
+    dplyr::select(yyyymm, year, month, dp, ep, tb, ltr, ts, def, rtb, rbr, infm)
+  
   # equity risk premium and risk free
   erp_rfree <- gw_raw |>
     dplyr::filter(yyyymm >= 192512) |>
@@ -49,9 +48,10 @@ download_goyal_welch <- function() {
       month = as.numeric(stringr::str_sub(yyyymm, -2))
     ) |>
     dplyr::select(yyyymm, year, month, erp, rfree)
-
+  
   list(
     gw_pred   = gw_pred,
     erp_rfree = erp_rfree
   )
+  
 }

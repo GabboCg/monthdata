@@ -1,19 +1,19 @@
-#' ---------------------------------------------------------------
-#' S&P 500: Daily prices, monthly aggregation, realized volatility
-#' Source: Yahoo Finance via tidyquant
-#' ---------------------------------------------------------------
+# ---------------------------------------------------------------
+# S&P 500: Daily prices, monthly aggregation, realized volatility
+# Source: Yahoo Finance via tidyquant
+# ---------------------------------------------------------------
 
 download_sp500 <- function(from = "1927-12-01", to = Sys.Date()) {
-
+  
   cat(">> Downloading S&P 500 daily data from Yahoo Finance...\n")
-
+  
   sp500_daily <- tidyquant::tq_get(
     x    = "^GSPC",
     get  = "stock.prices",
     from = from,
     to   = as.character(to)
   )
-
+  
   # daily squared log-returns
   sqret_daily <- sp500_daily |>
     dplyr::select(date, close) |>
@@ -28,7 +28,7 @@ download_sp500 <- function(from = "1927-12-01", to = Sys.Date()) {
       yyyymm = as.numeric(paste0(year, sprintf("%02d", month)))
     ) |>
     dplyr::select(yyyymm, year, month, ret2)
-
+  
   # monthly sum of squared returns
   sqret_monthly <- sp500_daily |>
     dplyr::select(date, close) |>
@@ -45,7 +45,7 @@ download_sp500 <- function(from = "1927-12-01", to = Sys.Date()) {
     ) |>
     dplyr::mutate(yyyymm = as.numeric(paste0(year, sprintf("%02d", month)))) |>
     dplyr::select(yyyymm, year, month, ret2)
-
+  
   # monthly realized volatility
   rv_stocks <- sp500_daily |>
     dplyr::select(date, close) |>
@@ -62,7 +62,7 @@ download_sp500 <- function(from = "1927-12-01", to = Sys.Date()) {
     ) |>
     dplyr::mutate(yyyymm = as.numeric(paste0(year, sprintf("%02d", month)))) |>
     dplyr::select(yyyymm, year, month, rv)
-
+  
   # monthly close and volume
   sp500_monthly <- sp500_daily |>
     dplyr::mutate(
@@ -79,7 +79,7 @@ download_sp500 <- function(from = "1927-12-01", to = Sys.Date()) {
       date = as.numeric(paste0(year, sprintf("%02d", month)))
     ) |>
     dplyr::select(date, close, volume)
-
+  
   list(
     sp500_daily    = sp500_daily,
     sqret_daily    = sqret_daily,
@@ -87,4 +87,5 @@ download_sp500 <- function(from = "1927-12-01", to = Sys.Date()) {
     rv_stocks      = rv_stocks,
     sp500_monthly  = sp500_monthly
   )
+  
 }

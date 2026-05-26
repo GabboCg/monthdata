@@ -1,19 +1,23 @@
+# ---------------------------------------------------------------
+# Technical Indicators on the S&P 500
+# Source: Computed from S&P 500 monthly prices, volume, and
+#         realized volatility (built upstream in 01-sp500.R)
+#
+# Following Neely, Rapach, Tu & Zhou (2014), each function returns
+# a tibble of binary {0, 1} signals keyed by yyyymm:
+#   - get_ma:  moving-average crossover signals
+#   - get_mom: price-momentum signals
+#   - get_vol: on-balance-volume crossover signals
+#   - get_voa: lagged realized-volatility signals
+# ---------------------------------------------------------------
+
+# moving-average crossover signals 
 get_ma <- function(y_t, s_i, l_i) {
-  
-  # ===========================================================================
-  # DESCRIPTION:
-  # 
-  # ---------------------------------------------------------------------------
-  # INPUT:
-  #       
-  # OUTPUT:
-  #       
-  # ---------------------------------------------------------------------------
   
   n_0_ma <- 1 * 11 # in-sample period, 1927:01 - 1927:11
   
-  ma_param <- expand.grid(x = s_i, y = l_i) %>% arrange(x) 
-
+  ma_param <- expand.grid(x = s_i, y = l_i) %>% arrange(x)
+  
   s_ma <- matrix(0, nrow = nrow(y_t) - n_0_ma, ncol = nrow(ma_param)) # 1927:12 - 2011:12
   
   date_t <- rownames(y_t)
@@ -38,7 +42,7 @@ get_ma <- function(y_t, s_i, l_i) {
   colnames(s_ma) <- paste0("ma(", ma_param[,1], ",", ma_param[,2], ")")
   rownames(s_ma) <- date_t[12:length(date_t)]
   
-  s_ma <- as_tibble(s_ma, rownames = "date") %>% 
+  s_ma <- as_tibble(s_ma, rownames = "date") %>%
     mutate(date = as.numeric(date))
   
   return(s_ma)
@@ -46,21 +50,10 @@ get_ma <- function(y_t, s_i, l_i) {
 }
 
 
-# Momentum indicators -----------------------------------------------------
-
+# price-momentum signals
 get_mom <- function(y_t, m_i) {
   
-  # ===========================================================================
-  # DESCRIPTION:
-  # 
-  # ---------------------------------------------------------------------------
-  # INPUT:
-  #       
-  # OUTPUT:
-  #       
-  # ---------------------------------------------------------------------------
-  
-  n_0_mom <- 1 * 12 
+  n_0_mom <- 1 * 12
   
   mom_param <- m_i
   
@@ -87,7 +80,7 @@ get_mom <- function(y_t, m_i) {
   colnames(s_mom) <- paste0("mom(", m_i, ")")
   rownames(s_mom) <- date_t[13:length(date_t)]
   
-  s_mom <- as_tibble(s_mom, rownames = "date") %>% 
+  s_mom <- as_tibble(s_mom, rownames = "date") %>%
     mutate(date = as.numeric(date))
   
   return(s_mom)
@@ -95,19 +88,9 @@ get_mom <- function(y_t, m_i) {
 }
 
 
-# volume based indicators -------------------------------------------------
+# on-balance-volume signals -----------------------------------------------
 
 get_vol <- function(y_t, volume, s_i, l_i) {
-  
-  # ===========================================================================
-  # DESCRIPTION:
-  # 
-  # ---------------------------------------------------------------------------
-  # INPUT:
-  #       
-  # OUTPUT:
-  #       
-  # ---------------------------------------------------------------------------
   
   t_vol <- nrow(volume)
   
@@ -116,7 +99,7 @@ get_vol <- function(y_t, volume, s_i, l_i) {
   vol_short <- s_i
   vol_long <- l_i
   
-  vol_param <- expand.grid(x = s_i, y = l_i) %>% arrange(x) 
+  vol_param <- expand.grid(x = s_i, y = l_i) %>% arrange(x)
   
   obv <- matrix(0, nrow = t_vol, 1)
   
@@ -159,10 +142,10 @@ get_vol <- function(y_t, volume, s_i, l_i) {
     
   }
   
-  colnames(s_vol) <- paste0("vol(", vol_param[,1], ",", vol_param[,2], ")") 
+  colnames(s_vol) <- paste0("vol(", vol_param[,1], ",", vol_param[,2], ")")
   rownames(s_vol) <- date_t[12:length(date_t)]
   
-  s_vol <- as_tibble(s_vol, rownames = "date") %>% 
+  s_vol <- as_tibble(s_vol, rownames = "date") %>%
     mutate(date = as.numeric(date))
   
   return(s_vol)
@@ -170,25 +153,14 @@ get_vol <- function(y_t, volume, s_i, l_i) {
 }
 
 
-# volatility indicators ---------------------------------------------------
-
+# lagged realized-volatility signals
 get_voa <- function (y_t, m_i) {
   
-  # ===========================================================================
-  # DESCRIPTION:
-  # 
-  # ---------------------------------------------------------------------------
-  # INPUT:
-  #       
-  # OUTPUT:
-  #       
-  # ---------------------------------------------------------------------------
-  
-  n_0_voa <- 1 * 12 
+  n_0_voa <- 1 * 12
   
   voa_param <- m_i
   
-  s_voa <- matrix(0,  nrow = nrow(y_t) - n_0_voa, ncol = length(voa_param)) 
+  s_voa <- matrix(0,  nrow = nrow(y_t) - n_0_voa, ncol = length(voa_param))
   
   date_t <- rownames(y_t)
   
@@ -208,10 +180,10 @@ get_voa <- function (y_t, m_i) {
     
   }
   
-  colnames(s_voa) <- paste0("rv(", m_i, ")") 
+  colnames(s_voa) <- paste0("rv(", m_i, ")")
   rownames(s_voa) <- date_t[13:length(date_t)]
   
-  s_voa <- as_tibble(s_voa, rownames = "date") %>% 
+  s_voa <- as_tibble(s_voa, rownames = "date") %>%
     mutate(date = as.numeric(date))
   
   return(s_voa)

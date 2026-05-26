@@ -1,17 +1,17 @@
-#' ---------------------------------------------------------------
-#' Cochrane-Piazzesi (2005) Bond Risk Premium Factor
-#' Source: Computed from FRED yield curve data
-#'   - GS1, GS2, GS5, GS10 (Treasury constant maturity rates)
-#'   - TB3MS (3-month T-bill)
-#' Uses the CP (2005) forward rate regression coefficients
-#' ---------------------------------------------------------------
+# ---------------------------------------------------------------
+# Cochrane-Piazzesi (2005) Bond Risk Premium Factor
+# Source: Computed from FRED yield curve data
+#   - GS1, GS2, GS5, GS10 (Treasury constant maturity rates)
+#   - TB3MS (3-month T-bill)
+# Uses the CP (2005) forward rate regression coefficients
+# ---------------------------------------------------------------
 
 download_cochrane_piazzesi <- function(from = "1952-01-01", to = Sys.Date()) {
-
+  
   cat(">> Computing Cochrane-Piazzesi factor from FRED yields...\n")
-
+  
   tickers <- c("TB3MS", "GS1", "GS2", "GS5", "GS10")
-
+  
   yields_raw <- tidyquant::tq_get(
     tickers,
     get  = "economic.data",
@@ -21,7 +21,7 @@ download_cochrane_piazzesi <- function(from = "1952-01-01", to = Sys.Date()) {
     tidyr::pivot_wider(names_from = symbol, values_from = price) |>
     janitor::clean_names() |>
     tidyr::drop_na()
-
+  
   # Cochrane-Piazzesi (2005) approach:
   # CP factor = gamma_0 + gamma_1*y1 + gamma_2*f2 + gamma_3*f3 + gamma_4*f4 + gamma_5*f5
   # where f_n are forward rates derived from yields
@@ -33,7 +33,7 @@ download_cochrane_piazzesi <- function(from = "1952-01-01", to = Sys.Date()) {
   #
   # CP (2005) Table 3 coefficients (approximate):
   # gamma = (-1.69, 0.81, -0.41, -0.18, 0.31, 0.80)
-
+  
   cp_data <- yields_raw |>
     dplyr::mutate(
       y1 = gs1 / 100,
@@ -48,6 +48,7 @@ download_cochrane_piazzesi <- function(from = "1952-01-01", to = Sys.Date()) {
       yyyymm = as.numeric(paste0(year, sprintf("%02d", month)))
     ) |>
     dplyr::select(yyyymm, year, month, cp)
-
+  
   cp_data
+  
 }

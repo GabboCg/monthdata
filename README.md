@@ -6,7 +6,7 @@ Scripts to **download and update the dataset** used in:
 
 ## Purpose
 
-Data collection only. Downloads and organizes ~178 monthly predictors from their original sources, extended to the latest available observation.
+Data collection only. Downloads and organizes the 179 monthly predictors listed in Table D.1 of the paper from their original sources, extended to the latest available observation.
 
 ## Quick Start
 
@@ -34,11 +34,11 @@ On first run, the script clones the [`fredmd`](https://github.com/GabboCg/fredmd
 | Module | Source | Variables |
 |--------|--------|-----------|
 | `R/01-sp500.R` | Yahoo Finance | S&P 500 prices, realized volatility, squared returns |
-| `R/02-goyal-welch.R` | [Amit Goyal](https://sites.google.com/view/agoyal145) | DP, DY, EP, DE, BM, NTIS, TB, LTY, LTR, TS, DEF, DFR, RTB, RBR, INFM, ERP, Rfree |
+| `R/02-goyal-welch.R` | [Amit Goyal](https://sites.google.com/view/agoyal145) | DP, EP, TB, LTR, TS, DEF, RTB, RBR, INFM (+ ERP, Rfree in separate sheet) |
 | `R/03-kenneth-french.R` | [Ken French Data Library](https://mba.tuck.dartmouth.edu/pages/faculty/ken.french/data_library.html) | MKT, SMB, HML, MOM, RMW, CMA, STR |
 | `R/04-pastor-stambaugh.R` | [Lubos Pastor](https://faculty.chicagobooth.edu/lubos-pastor/data) | PS (aggregate liquidity) |
 | `R/05-fred-api.R` | [FRED](https://fred.stlouisfed.org/) | IPM, IPA, M1M, M1A, CAP, EMPL, SENT, HS |
-| `R/06-fred-md.R` | [FRED-MD](https://www.stlouisfed.org/research/economists/mccracken/fred-databases) + [`fredmd`](https://github.com/GabboCg/fredmd) | ~130 transformed macro series (with EM imputation) |
+| `R/06-fred-md.R` | [FRED-MD](https://www.stlouisfed.org/research/economists/mccracken/fred-databases) + [`fredmd`](https://github.com/GabboCg/fredmd) | 113 transformed macro series (whitelisted to Table D.1; MZMSL pulled directly from FRED) |
 | `R/07-datastream-proxies.R` | FRED + Yahoo Finance | ORDM, ORDA, INFA, MSCI, CRB, PMI, PMBB, CONF, TED, DIFF |
 | `R/08-uncertainty.R` | Multiple (see below) | EPU, RABEX, UNCBEX, GPRH, GPRHT, GPRHA, FINUNC, MACROUNC, REALUNC, USMPU |
 | `R/09-vix.R` | [FRED](https://fred.stlouisfed.org/series/VIXCLS) | VIX |
@@ -77,16 +77,21 @@ Several variables in the original paper were sourced from **Datastream (Refiniti
 
 ## Variable Counts
 
-The paper (Table D.1) lists **178 predictors** across two samples:
+The pipeline produces the 179 predictors listed in Table D.1 of the paper across two samples:
 
 | Sample | Period | Predictors | Description |
 |--------|--------|------------|-------------|
-| Short | 1990–present | 178 | All predictors (includes variables available from 1990 only) |
-| Long | 1960–present | 157 | Excludes 21 variables not available before 1990 |
+| Short | 1990–present | 179 | All Table D.1 predictors (includes variables only available from 1990 onwards) |
+| Long  | 1960–present | 157 | Excludes the 22 variables flagged in Table D.1 as available only from 1990 |
 
-The 21-variable difference corresponds to variables only available from 1990 onwards (e.g., VIX, EPU, USMPU, RABEX, UNCBEX, FINUNC, MACROUNC, REALUNC, RMW, CMA, CP, PS, TED, MSCI, and several FRED-MD series).
+The 22 short-sample-only variables (Table D.1 footnote `a`) dropped from the long sample:
 
-**Possible discrepancies:** The current FRED-MD vintage may include series added after 2019 or exclude discontinued series. Variable names may also differ slightly due to FRED renaming (e.g., `WPSFD49207` -> `PPIFGS`). The EM imputation in the `fredmd` pipeline handles missing values, so the balanced dataset should contain all series present in the current FRED-MD release.
+```
+MSCI, RMW, CMA, CP, PS, TED, TWEXMMTH, CAP, SENT, CONF, DIFF, PMBB,
+ANDENOX, VXOCLSX, VIX, RABEX, UNCBEX, EPU, FINUNC, MACROUNC, REALUNC, USMPU
+```
+
+**Naming conventions.** FRED-MD legacy codes are renamed to the Table D.1 abbreviations: `WPSFD49207 -> PPIFGS`, `WPSFD49502 -> PPIFCG`, `WPSID61 -> PPIITM`, `WPSID62 -> PPICRM`, `TWEXAFEGSMTHx -> TWEXMMTH`, `VIXCLSx -> VXOCLSX`. `MZMSL` was removed from recent FRED-MD vintages, so it is pulled directly from FRED and transformed with FRED-MD tcode 6 (second log difference). The EM imputation in the `fredmd` package handles missing values across the rest of the panel.
 
 ## Output
 
@@ -95,13 +100,20 @@ The pipeline produces:
 ```
 data/
   short/
-    PredictorData.xlsx   # 1990–present (all predictors)
-    RVStocks.rds         # RV descriptive stats (short sample)
+    PredictorData.xlsx   # 1990-present, 179 predictors
   long/
-    PredictorData.xlsx   # 1960–present (all predictors)
-    RVStocks.rds         # RV descriptive stats (long sample)
-  DescStat.rds           # Descriptive statistics for all predictors
+    PredictorData.xlsx   # 1960-present, 157 predictors
 ```
+
+Each Excel workbook contains five sheets:
+
+| Sheet | Contents |
+|-------|----------|
+| `predictors` | Table D.1 predictors, keyed by `yyyymm` |
+| `square-returns` | Monthly sum of squared daily S&P 500 log-returns |
+| `daily-returns` | Daily squared log-returns |
+| `erp-rfree` | Equity risk premium and risk-free rate |
+| `recession` | NBER recession dummy (`USREC`) |
 
 Excel files are also uploaded to Google Drive (`monthdata/short/` and `monthdata/long/`).
 

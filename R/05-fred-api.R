@@ -1,14 +1,14 @@
-#' ---------------------------------------------------------------
-#' Macroeconomic variables from FRED API
-#' Source: Federal Reserve Economic Data via tidyquant
-#' ---------------------------------------------------------------
+# ---------------------------------------------------------------
+# Macroeconomic variables from FRED API
+# Source: Federal Reserve Economic Data via tidyquant
+# ---------------------------------------------------------------
 
 download_fred_api <- function(from = "1959-01-01", to = Sys.Date()) {
-
+  
   cat(">> Downloading macroeconomic data from FRED...\n")
-
+  
   tickers <- c("INDPRO", "M1SL", "TCU", "PAYEMS", "UMCSENT", "HOUST")
-
+  
   fred_raw <- tidyquant::tq_get(
     tickers,
     get          = "economic.data",
@@ -17,7 +17,7 @@ download_fred_api <- function(from = "1959-01-01", to = Sys.Date()) {
   ) |>
     tidyr::pivot_wider(names_from = symbol, values_from = price) |>
     janitor::clean_names()
-
+  
   fred_api <- fred_raw |>
     dplyr::mutate(
       ipm  = log(indpro / dplyr::lag(indpro, 1)),
@@ -35,6 +35,7 @@ download_fred_api <- function(from = "1959-01-01", to = Sys.Date()) {
       yyyymm = as.numeric(paste0(year, sprintf("%02d", month)))
     ) |>
     dplyr::select(yyyymm, year, month, ipm, ipa, m1m, m1a, cap, empl, sent, hs)
-
+  
   fred_api
+  
 }
