@@ -1,4 +1,4 @@
-# monthdata — Monthly Predictors for Realized-Volatility Forecasting
+# Monthly Predictors for Realized-Volatility Forecasting
 
 [![R](https://img.shields.io/badge/R-%3E%3D4.0-276DC3?logo=r&logoColor=white)](https://www.r-project.org/)
 [![FRED-MD](https://img.shields.io/badge/Data-FRED--MD-1f6feb)](https://www.stlouisfed.org/research/economists/mccracken/fred-databases)
