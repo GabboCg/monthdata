@@ -72,9 +72,7 @@ The latest refresh of both workbooks is published to Google Drive and updated au
 | Short  | 1990–present | 179 | [PredictorData.xlsx](https://docs.google.com/spreadsheets/d/1t9lgsI_JUWdkEaZsyfm_sd85m7NHStlH/edit?usp=sharing) |
 | Long   | 1960–present | 157 | [PredictorData.xlsx](https://docs.google.com/spreadsheets/d/1MwsjDhoAaUnnIdwKRcmBsPSOgvxFlIzk/edit?usp=sharing) |
 
-For a direct `.xlsx` download instead of the in-browser viewer, append `/export?format=xlsx` to the file ID:
-- Short: <https://docs.google.com/spreadsheets/d/1t9lgsI_JUWdkEaZsyfm_sd85m7NHStlH/export?format=xlsx>
-- Long: <https://docs.google.com/spreadsheets/d/1MwsjDhoAaUnnIdwKRcmBsPSOgvxFlIzk/export?format=xlsx>
+For a direct `.xlsx` download instead of the in-browser viewer: [Short Data](https://docs.google.com/spreadsheets/d/1t9lgsI_JUWdkEaZsyfm_sd85m7NHStlH/export?format=xlsx) · [Long Data](https://docs.google.com/spreadsheets/d/1MwsjDhoAaUnnIdwKRcmBsPSOgvxFlIzk/export?format=xlsx).
 
 ## Usage
 
